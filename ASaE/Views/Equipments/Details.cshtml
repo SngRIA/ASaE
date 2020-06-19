@@ -1,0 +1,53 @@
+﻿@model ASaE.Models.Equipment
+
+@{ 
+    Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">@Html.ActionLink("Главная страница", "Index", "Home")</li>
+        <li class="breadcrumb-item">@Html.ActionLink("Оборудование", "Index")</li>
+        <li class="breadcrumb-item active" aria-current="page">@string.Concat("Оборудование #", Model.Id)</li>
+    </ol>
+</nav>
+
+<hr />
+
+<div class="equipment-info">
+    <div class="form-row">
+        <div class="form-group pl-2" style="width: -webkit-fill-available;">
+            <h3>@Model.Name</h3>
+            <hr />
+            <div class="consumable-info">
+                <h4>Потребляемый материал</h4>
+                @foreach (var consumable in Model.EquipmentConsumables)
+                {
+                    <h5 class="mt-3">Наименование: @consumable.Name</h5>
+                    <h5>Количество материала - @consumable.Value</h5>
+                }
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group mt-2">
+        <h4>Описание</h4>
+        <p class="pl-2">@Model.Description</p>
+    </div>
+
+    <hr />
+
+    <div class="d-flex justify-content-center">
+        @Html.ActionLink("Вернуться", "Index", "Equipments", new { @class = "btn btn-outline-dark mr-2" })
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            if (User.IsInRole("admin") || User.IsInRole("eas"))
+            {
+                @Html.ActionLink("Редактировать", "Edit", "Equipments", new { Id = Model.Id }, new { @class = "btn btn-outline-dark" })
+            }
+        }
+    </div>
+</div>

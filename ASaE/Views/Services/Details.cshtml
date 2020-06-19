@@ -1,0 +1,100 @@
+﻿@model ASaE.Models.ServiceDetailsViewModel
+
+@{ 
+    var stringServiceType = Model.Service.Type == ASaE.Models.ServiceType.Object ? "Предмет" : "Обучение";
+}
+
+<div class="toast hide" data-delay="5000" id="basketToast" style="position: absolute;bottom: 15px;right: 15px;">
+    <div class="toast-header">
+        <strong class="mr-auto"> Корзина </strong>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">&times;</button>
+    </div>
+    <div class="toast-body">
+        @Model.Service.Name - успешно добавлен в корзину!
+    </div>
+</div>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">@Html.ActionLink("Главная страница", "Index", "Home")</li>
+        <li class="breadcrumb-item">@Html.ActionLink("Услуги", "Index")</li>
+        <li class="breadcrumb-item active" aria-current="page">@string.Concat("Услуга #", Model.Service.Id)</li>
+    </ol>
+</nav>
+
+<hr />
+
+@using (Html.BeginForm("AddInBasket", "Basket", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="service-info">
+        <div class="form-row service-main-info">
+            <div class="service-img mt-2">
+                <div class="img" style="background: url(data:image/jpeg;base64,@Convert.ToBase64String(Model.Service.Picture)); background-position: center; background-size: cover;"></div>
+            </div>
+
+            <div class="form-group" style="width: 65%;">
+                @Html.HiddenFor(Model => Model.Service.Id)
+                <h3>@Model.Service.Name</h3>
+                <hr />
+
+                <h4>Цена - @Model.Service.Cost</h4>
+                <h4>Направленность - @stringServiceType</h4>
+                <h4>Описание</h4>
+                <p class="pl-2">@Model.Service.Description</p>
+            </div>
+        </div>
+
+        @if (Model.Service.Type == ASaE.Models.ServiceType.Object && User.Identity.IsAuthenticated)
+        {
+            <div class="form-group mt-2">
+                <h4>Файлы</h4>
+                <hr />
+
+                <div class="input-group mb-3">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="fileObj" name="fileObj">
+                        <label class="custom-file-label" style="border: 1px solid #191e23; color: #191e23" for="fileObj">Выберите файл</label>
+                    </div>
+                </div>
+                <div class="custom-file" style="display: flex; justify-content: space-evenly;">
+                    @Html.Label("Количество единиц", new { })
+                    @Html.TextBox("Count", "1", new { style = "border: 1px solid #191e23; border-radius: 3px; padding: 5px;", type = "number", min = "1", max = "100" })
+                </div>
+            </div>
+        }
+
+        <hr />
+
+        <div class="d-flex justify-content-center">
+            @Html.ActionLink("Вернуться", "Index", "Services", new { @class = "btn btn-outline-dark mr-2" })
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                if (!Model.IsContainsInBasket)
+                {
+                    <input type="submit" value="Добавить в корзину" class="btn btn-outline-dark mr-2" />
+                }
+                else
+                {
+                    <div id="addInBasket" class="mr-2" style="place-self: center">
+                        Добавлено
+                    </div>
+                }
+
+                if (User.IsInRole("admin") || User.IsInRole("sas"))
+                {
+                    @Html.ActionLink("Редактировать", "Edit", "Services", new { Id = Model.Service.Id }, new { @class = "btn btn-outline-dark" })
+                }
+            }
+        </div>
+    </div>
+}
+
+@section scripts {
+    <script>
+        $('#addInBasket').on("click", function () {
+            $('#basketToast').toast('show');
+        });
+    </script>
+}

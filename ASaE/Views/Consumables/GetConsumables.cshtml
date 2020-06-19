@@ -1,0 +1,20 @@
+﻿@model IEnumerable<ASaE.Models.EquipmentConsumable>
+
+@foreach (var consumable in Model)
+{
+    <div class="object">
+        <div class="object-card-body">
+            <h5 class="object-card-title" style="white-space: normal;">@consumable.Name</h5>
+            <p class="object-card-text">Запасы: <strong>@consumable.Value / @consumable.MaxValue</strong></p>
+            @Html.ActionLink("Подробнее", "Details", "Consumables", new { Id = consumable.Id }, new { @class = "btn btn-outline-dark" })
+        </div>
+    </div>
+}
+@if (User.IsInRole("admin") || User.IsInRole("eas"))
+{
+    <div class="service">
+        <div class="service-card-body">
+            @Html.ActionLink("Добавить новый расходный материал", "Create")
+        </div>
+    </div>
+}

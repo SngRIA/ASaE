@@ -1,0 +1,15 @@
+﻿@model ASaE.Models.Service
+
+@if (Model == null)
+{
+    <div>Удалено</div>
+}
+else
+{
+    <div style="flex-grow: 1">#@Model.Id</div>
+    <div style="flex-grow: 3">@Html.ActionLink(Model.Name, "Details", "Services", new { id = Model.Id }, null)</div>
+    <div style="flex-grow: 0">
+        @Ajax.ActionLink("Удалить", "Delete", "Basket", new { id = Model.Id }, 
+                        new AjaxOptions { UpdateTargetId = "service" + Model.Id },new { @class = "pr-2" })
+    </div>
+}

@@ -1,0 +1,72 @@
+﻿<h2 class="pl-2">Статистика потребления</h2>
+
+<hr />
+
+<div>
+    <div id="graphImg">
+        <div id="loading" class="d-none justify-content-center mb-2">
+            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div id="consumables-objects">
+
+        </div>
+        <button id="search" class="btn btn-outline-dark mt-2 w-100">Отобразить</button>
+    </div>
+</div>
+@section scripts {
+    <script src="@Url.Content("~/Scripts/canvasjs.min.js")"></script>
+    <script>
+        $('#consumables-objects').load("@Url.Action("GetEquipmentConsumablesList")");
+
+        $('#search').on("click", function () {
+            $('#loading').addClass("d-flex");
+            DrawGraph($('#consumables').val());
+        });
+
+        function DrawGraph(id) {
+            $('#consumables').html = "";
+
+            $.get("@Url.Action("GetConsumableGraph")?id=" + id, function (data) {
+
+                data.forEach(function (currValue, index) {
+                    currValue.x = new Date(currValue.x);
+                });
+
+                var dataSpan = $('#consumables option:selected');
+                var chart = new CanvasJS.Chart("graphImg", {
+                    animationEnabled: true,
+                    theme: "light2",//light1
+                    title: {
+                        text: "Статистика изменений - " + dataSpan.html(),
+                        fontColor: "#191e23"
+                    },
+                    exportEnabled: true,
+                    axisX: {
+                        valueFormatString: "DD-MM-YY"
+                    },
+                    data: [
+                        {
+                            // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                            type: "line",
+                            dataPoints: data,
+                            lineColor: "rgba(0,0,0,.8)",
+                            color: "rgba(0,0,0,.8)"
+                        }
+                    ]
+                });
+
+                let graphImg = $('#graphImg');
+                graphImg.css("height", 500);
+                graphImg.addClass("mb-2");
+
+                chart.render();
+            }).done(function () {
+                $('loading').remove();
+            });
+        }
+    </script>
+}

@@ -1,0 +1,77 @@
+﻿@model ASaE.Models.ManageIndexViewModel
+
+@{
+    Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+}
+
+<div class="profile m-2">
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Профиль</a>
+            <a class="nav-item nav-link" id="nav-request-tab" data-toggle="tab" href="#nav-request" role="tab" aria-controls="nav-request" aria-selected="false">Заявки</a>
+            <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Заказы</a>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+            <div class="profile-info p-2">
+                <div class="profile-prop">
+                    <p>ФИО:</p>
+                    <strong class="ml-2">@Model.User.FirstName @Model.User.LastName @Model.User.MiddleName</strong>
+                </div>
+                <div class="profile-prop">
+                    <p>Email:</p>
+                    <strong class="ml-2">@Model.User.Email</strong>
+                </div>
+                @*<div class="profile-prop">
+                    <p>Статус почты:</p>
+                    <strong class="ml-2">@Model.User.EmailConfirmed</strong>
+                </div>
+                if (User.IsInRole("eas") || User.IsInRole("sas"))
+                {
+                    <div class="profile-prop">
+                        <p>Адрес:</p>
+                        <strong class="ml-2">@Model.User.Address</strong>
+                    </div>
+                }*@
+            </div>
+        </div>
+        <div class="tab-pane fade" id="nav-request" role="tabpanel" aria-labelledby="nav-request-tab">
+            <div class="container-objects">
+                @foreach (var request in Model.Requests)
+                {
+                    <div class="card m-2" style="width: 15rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Заявка @request.Id</h5>
+                            <p class="card-text">Ожидает оплаты</p>
+                            <hr />
+                            @Html.ActionLink("Инструкция оплаты", "GetInstruction")
+                        </div>
+                    </div>
+                }
+                @if (Model.Requests.Count <= 0)
+                {
+                    <h5 class="m-5 text-center">Ожидающие заявки отсутствуют</h5>
+                }
+            </div>
+        </div>
+        <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+            <div class="container-objects">
+                @foreach (var contract in Model.Contracts)
+                {
+                    <div class="card m-2" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">@contract.Status</h5>
+                            <p class="card-text">Дата заказа @contract.Date.ToShortDateString()</p>
+                            @Html.ActionLink("Подробнее", "UserDetails", "Contracts", new { Id = contract.Id }, new { @class = "btn btn-dark w-100" })
+                        </div>
+                    </div>
+                }
+                @if (Model.Contracts.Count <= 0)
+                {
+                    <h5 class="m-5 text-center">Заказы отсутствуют</h5>
+                }
+            </div>
+        </div>
+    </div>
+</div>

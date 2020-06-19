@@ -1,0 +1,31 @@
+﻿@model IEnumerable<ASaE.Models.Contract>
+
+@foreach (var contract in Model)
+{
+    string stringStatus = string.Empty;
+    switch (contract.Status)
+    {
+        case ASaE.Models.ContractStatus.Waiting:
+            stringStatus = "Ожидание";
+            break;
+        case ASaE.Models.ContractStatus.Ready:
+            stringStatus = "Готово";
+            break;
+        case ASaE.Models.ContractStatus.Canceled:
+            stringStatus = "Отменено";
+            break;
+        default:
+            stringStatus = "Отменено";
+            break;
+    }
+    <div class="object">
+        <div class="object-card-body">
+            <h5 class="object-card-title">#@contract.Id</h5>
+            <p class="object-card-text">Статус: <strong>@stringStatus</strong></p>
+            <p class="object-card-text">Запросил: <strong>@contract.Client.FirstName @contract.Client.LastName</strong></p>
+            @Html.ActionLink("Подробнее", "Details", "Contracts", new { Id = contract.Id }, new { @class = "btn btn-outline-dark" })
+        </div>
+    </div>
+}
+
+

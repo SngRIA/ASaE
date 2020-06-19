@@ -1,0 +1,20 @@
+﻿@model IEnumerable<ASaE.Models.Service>
+
+@foreach (var service in Model)
+{
+    <div class="service" style="background: url(data:image/jpeg;base64,@Convert.ToBase64String(service.Picture)); background-position: center; background-size: cover;">
+        <div class="service-card-body">
+            <h5 class="service-card-title">@service.Name</h5>
+            <p class="service-card-text">Цена: <strong>от @service.Cost</strong></p>
+            @Html.ActionLink("Подробнее", "Details", "Services", new { Id = service.Id }, new { @class = "btn btn-outline-dark" })
+        </div>
+    </div>
+}
+@if (User.IsInRole("admin") || User.IsInRole("sas"))
+{
+    <div class='service'> 
+        <div class='service-card-body'> 
+            @Html.ActionLink("Добавить новую услугу", "Create")
+        </div> 
+    </div>
+}

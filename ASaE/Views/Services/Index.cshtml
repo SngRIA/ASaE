@@ -1,0 +1,87 @@
+﻿@model IEnumerable<ASaE.Models.Service>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">@Html.ActionLink("Главная страница", "Index", "Home")</li>
+        <li class="breadcrumb-item active" aria-current="page">Услуги</li>
+    </ol>
+</nav>
+
+<hr />
+
+<div class="services-controll">
+    <div class="services" id="services">
+        @Html.Partial("GetServicesList")
+    </div>
+    <!--ajax update-->
+    @using (Ajax.BeginForm("GetServicesList", new AjaxOptions
+    {
+        UpdateTargetId = "services",
+        OnBegin = "OnBegin"
+    }))
+    {
+        <div class="services-filters accordion">
+            <div class="card" id="filterName">
+                <div class="card-header" id="headingName">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseName" aria-expanded="true" aria-controls="collapseName">
+                            Название
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseName" class="collapse show" aria-labelledby="headingName" data-parent="#filterName">
+                    <div class="card-body">
+                        @Html.TextBox("name", null, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" id="filterPrice">
+                <div class="card-header" id="headingPrice">
+                    <h5 class="mb-0">
+                        <button id="price" class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapsePrice" aria-expanded="false" aria-controls="collapsePrice">
+                            Цена
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapsePrice" class="collapse" aria-labelledby="headingPrice" data-parent="#filterPrice">
+                    <div class="card-body">
+                        <div id="rangeslider"></div>
+                        @Html.Hidden("priceMin", "0")
+                        @Html.Hidden("priceMax", "500")
+                    </div>
+                </div>
+            </div>
+
+            <hr class="m-2" />
+
+            <div class="services-filter-search">
+                <button class="btn btn-outline-dark m-2"> Поиск </button>
+            </div>
+        </div>
+    }
+</div>
+
+@section scripts {
+    <script>
+        function OnBegin() {
+            $('services').html("");
+        }
+
+        $(function () {
+            $('#rangeslider').slider({
+                range: true,
+                min: 10,
+                max: 500,
+                values: [50, 250],
+                slide: function (event, ui) {
+                    $('#price').html("Цена: " + ui.values[0] + " - " + ui.values[1]);
+                    $('#priceMin').val(ui.values[0]);
+                    $('#priceMax').val(ui.values[1]);
+                }
+            });
+        });
+    </script>
+}

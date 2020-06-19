@@ -1,0 +1,19 @@
+﻿@model IEnumerable<ASaE.Models.Equipment>
+
+@foreach (var equipment in Model)
+{
+    <div class="equipment" style="background: url(@Url.Content("~/Content/img/Equipments/"+equipment.Id+"/icon.jpg")); background-position: center; background-size: cover;">
+        <div class="equipment-card-body">
+            <h5 class="equipment-card-title" style="white-space: normal">@equipment.Name</h5>
+            @Html.ActionLink("Подробнее", "Details", "Equipments", new { Id = equipment.Id }, new { @class = "btn btn-outline-dark" })
+        </div>
+    </div>
+}
+@if (User.IsInRole("admin") || User.IsInRole("eas"))
+{
+    <div class="service">
+        <div class="service-card-body">
+            @Html.ActionLink("Добавить новое оборудование", "Create")
+        </div>
+    </div>
+}

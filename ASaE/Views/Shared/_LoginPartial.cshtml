@@ -1,0 +1,43 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="dropdown show">
+            <div class="btn btn-light" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                @User.Identity.GetUserName()
+            </div>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="position: absolute; left: -70px; width: 208px;">
+                @Html.ActionLink("Профиль", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Профиль", @class = "dropdown-item" })
+                <hr />
+                @Html.ActionLink("Услуги", "Index", "Services", routeValues: null, htmlAttributes: new { title = "Услуги", @class = "dropdown-item" })
+                @Html.ActionLink("Корзина", "Index", "Basket", routeValues: null, htmlAttributes: new { title = "Корзина", @class = "dropdown-item" })
+                @if (User.IsInRole("sas") || User.IsInRole("admin"))
+                {
+                    @Html.ActionLink("Заявки", "Index", "Requests", routeValues: null, htmlAttributes: new { title = "Заявки", @class = "dropdown-item" });
+                }
+                @if (User.IsInRole("eas") || User.IsInRole("admin"))
+                {
+                    @Html.ActionLink("Расход оборудования", "InfoConsumable", "Consumables", routeValues: null, htmlAttributes: new { title = "Расход оборудования", @class = "dropdown-item" });
+                    @Html.ActionLink("Оборудование", "Index", "Equipments", routeValues: null, htmlAttributes: new { title = "Оборудование", @class = "dropdown-item" });
+                    @Html.ActionLink("Рсходные материалы", "Index", "Consumables", routeValues: null, htmlAttributes: new { title = "Рсходные материалы", @class = "dropdown-item" });
+                }
+                @if (User.IsInRole("sas") || User.IsInRole("eas") || User.IsInRole("admin"))
+                {
+                    @Html.ActionLink("Договоры", "Index", "Contracts", routeValues: null, htmlAttributes: new { title = "Договоры", @class = "dropdown-item" });
+                }
+                <hr />
+                <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()">Выйти</a>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <ul class="nav">
+        <li class="nav-item">@Html.ActionLink("Регистрация", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "nav-link active" })</li>
+        <li class="nav-item">@Html.ActionLink("Выполнить вход", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", title = "Вход", @class = "nav-link active" })</li>
+    </ul>
+}

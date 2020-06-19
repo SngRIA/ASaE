@@ -1,0 +1,92 @@
+﻿@model ICollection<ASaE.Models.Contract>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">@Html.ActionLink("Главная страница", "Index", "Home")</li>
+        <li class="breadcrumb-item active" aria-current="page">Договоры</li>
+    </ol>
+</nav>
+
+<hr />
+
+<div class="objects-controll">
+    <div class="container-objects" id="container-objects">
+        @Html.Partial("GetContractsList")
+    </div>
+
+    @using (Ajax.BeginForm("GetContractsList", new AjaxOptions
+    {
+        UpdateTargetId = "container-objects",
+        OnBegin = "OnBegin"
+    }))
+    {
+        <div class="objects-filters accordion">
+            <div class="card" id="filterId">
+                <div class="card-header" id="headingId">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseId" aria-expanded="true" aria-controls="collapseId">
+                            Id работы
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseId" class="collapse show" aria-labelledby="headingId" data-parent="#filterId">
+                    <div class="card-body">
+                        @Html.TextBox("id", null, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" id="filterUserName">
+                <div class="card-header" id="headingUserName">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseUserName" aria-expanded="true" aria-controls="collapseUserName">
+                            Имя кто сделал запрос
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseUserName" class="collapse" aria-labelledby="headingUserName" data-parent="#filterUserName">
+                    <div class="card-body">
+                        @Html.TextBox("userName", null, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" id="filterStatus">
+                <div class="card-header" id="headingStatus">
+                    <h5 class="mb-0">
+                        <button id="price" class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseStatus" aria-expanded="false" aria-controls="collapseStatus">
+                            Статус заявки
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseStatus" class="collapse" aria-labelledby="headingStatus" data-parent="#filterStatus">
+                    <div class="card-body">
+                        @Html.DropDownList("contractStatus", new List<SelectListItem> {
+                                            new SelectListItem { Text = "", Value = "" },
+                                            new SelectListItem { Text = "Отмененные", Value = ASaE.Models.RequestStatus.Canceled.ToString() },
+                                            new SelectListItem { Text = "Ожидающие", Value = ASaE.Models.RequestStatus.Waiting.ToString() },
+                                            new SelectListItem { Text = "Готовые", Value = ASaE.Models.RequestStatus.Ready.ToString() },
+                               }, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <hr class="m-2" />
+
+            <div class="objects-filter-search">
+                <button class="btn btn-outline-dark m-2"> Поиск </button>
+            </div>
+        </div>
+    }
+</div>
+
+@section scripts {
+    <script>
+        function OnBegin() {
+            $('container-objects').html("");
+        }
+    </script>
+}

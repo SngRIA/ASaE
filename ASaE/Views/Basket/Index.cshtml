@@ -1,0 +1,82 @@
+﻿@model ASaE.Models.BasketConfirmViewModel
+
+<h2> Корзина </h2>
+
+<hr />
+
+<div class="basket">
+    @if (Model?.UserBasket.Items?.Count() != 0)
+    {
+        <div class="m-1 d-flex">
+            <div style="flex-grow: 1">Индекс</div>
+            <div style="flex-grow: 3">Наименование услуги</div>
+            <div style="flex-grow: 0">Взаимодействие</div>
+        </div>
+        foreach (var userBasketItem in Model?.UserBasket?.Items)
+        {
+            <div class="basket-service m-1" id="@string.Concat("service", userBasketItem.Service.Id)">
+                <div style="flex-grow: 1">#@userBasketItem.Service.Id</div>
+                <div style="flex-grow: 3">@Html.ActionLink(userBasketItem.Service.Name, "Details", "Services", new { id = userBasketItem.Service.Id }, null)</div>
+                <div style="flex-grow: 0">
+                    @Ajax.ActionLink("Удалить", "Delete", "Basket", new { id = userBasketItem.Service.Id },
+                                    new AjaxOptions { 
+                                        UpdateTargetId = "service" + userBasketItem.Service.Id, 
+                                        OnComplete = "OnComplete" 
+                                    }, new { @class = "pr-2" })
+                </div>
+            </div>
+         }
+        <div class="service-prop m-1">
+            <label> Примечание </label>
+            @Html.TextBoxFor(b => b.UserComment, "", new { form = "formConfirm" })
+        </div>
+    }
+    else
+    {
+        <div class="text-center"> Корзина пуста </div>
+    }
+    <hr />
+
+    <div class="basket-controls">
+        @Html.ActionLink("Услуги", "Index", "Services", null, new { @class = "btn btn-outline-dark mr-2", style = "flex-grow: 1;" })
+
+        @if (Model?.UserBasket.Items?.Count() > 0)
+        {
+            using (Html.BeginForm("NewRequest", "Basket", FormMethod.Post, new { id = "formConfirm" }))
+            {
+                <input type="submit" value="Оформить" class="btn btn-outline-dark" style = "flex-grow: 4;"/>
+                @*Html.ActionLink("Оформить", "NewRequest", "", new { @class = "btn btn-outline-dark", style = "flex-grow: 2;", id = "request" });*@
+            }
+        }
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var activeItemsList = @Model? UserBasket?.Items.Count();
+
+        function OnComplete(result) {
+            if (result.responseText.includes("Удалено")) {
+                activeItemsList--;
+
+                if (activeItemsList <= 0) {
+                    $('#request').css("display", "none");
+                }
+            }
+        }
+    /*function DeleteId(id) {
+        countItems--;
+        if (countItems <= 0) {
+            $('#basketItem' + id).remove();
+            $('#request').css("display", "none");
+        }
+    }*/
+    /*function Check() {
+        if (countItems == 0) {
+            $('#request').css("display", "none");
+        }
+    }
+    setTimeout(Check, 2000);*/
+
+    </script>
+}

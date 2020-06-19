@@ -1,0 +1,71 @@
+﻿@model IEnumerable<ASaE.Models.Equipment>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">@Html.ActionLink("Главная страница", "Index", "Home")</li>
+        <li class="breadcrumb-item active" aria-current="page">Оборудование</li>
+    </ol>
+</nav>
+
+<hr />
+
+<div class="equipments-controll">
+    <div class="equipments" id="equipments">
+        @Html.Partial("GetEquipmentsList")
+    </div>
+    <!--ajax update-->
+    @using (Ajax.BeginForm("GetEquipmentsList", new AjaxOptions
+    {
+        UpdateTargetId = "equipments",
+        OnBegin = "OnBegin"
+    }))
+    {
+        <div class="equipments-filters accordion">
+            <div class="card" id="filterName">
+                <div class="card-header" id="headingName">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseName" aria-expanded="true" aria-controls="collapseName">
+                            Название
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseName" class="collapse show" aria-labelledby="headingName" data-parent="#filterName">
+                    <div class="card-body">
+                        @Html.TextBox("name", null, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" id="filterConsumableName">
+                <div class="card-header" id="headingConsumableName">
+                    <h5 class="mb-0">
+                        <button id="price" class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseConsumableName" aria-expanded="false" aria-controls="collapseConsumableName">
+                            Наименование расходного материала
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseConsumableName" class="collapse" aria-labelledby="headingConsumableName" data-parent="#filterConsumableName">
+                    <div class="card-body">
+                        @Html.TextBox("consumableName", null, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <hr class="m-2" />
+
+            <div class="equipments-filter-search">
+                <button class="btn btn-outline-dark m-2"> Поиск </button>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function OnBegin() {
+            $('equipments').html("");
+        }
+    </script>
+}

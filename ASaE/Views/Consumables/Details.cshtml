@@ -1,0 +1,32 @@
+﻿@model ASaE.Models.EquipmentConsumable
+
+@{
+    Layout = "~/Views/Shared/_LayoutSmall.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="service-info">
+        <div class="form-row service-main-info">
+
+            <div class="form-group">
+                @Html.HiddenFor(Model => Model.Id)
+                <h3 class="pl-2">@Model.Name</h3>
+                <hr />
+
+                <h4 class="pl-2">Осталось - @Model.Value / @Model.MaxValue</h4>
+                <h4 class="pl-2 mt-4">Описание</h4>
+                <p class="p-2">@Model.Description</p>
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="d-flex justify-content-center">
+            @Html.ActionLink("Вернуться", "Index", "Consumables", new { Id = Model.Id }, new { @class = "btn btn-outline-dark mr-2" })
+            @Html.ActionLink("Редактировать", "Edit", "Consumables", new { Id = Model.Id }, new { @class = "btn btn-outline-dark mr-2" })
+            @Html.ActionLink("График потребления", "GetGraphConsumable", "Consumables", new { Id = Model.Id }, new { @class = "btn btn-outline-dark" })
+        </div>
+    </div>
+}

@@ -1,0 +1,15 @@
+﻿@model ASaE.Models.Equipment
+
+<h4>Удалить #@Model.Id - @Model.Name</h4>
+
+<div class="text-center">
+    Вы действительно хотитие удалить оборудование - @Model.Name?
+</div>
+
+<hr />
+
+<div class="d-flex justify-content-center">
+    @Html.ActionLink("Вернуться", "Index", "Equipments", new { @class = "btn btn-outline-dark mr-2" })
+    @Html.ActionLink("Удалить оборудование", "Delete", "Equipments", new { @class = "btn btn-outline-dark mr-2" })
+</div>
+

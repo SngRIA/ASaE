@@ -1,0 +1,139 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ЦМИТ "Мастерская идей"</title>
+    @Styles.Render("~/Content/lending-css")
+
+</head>
+<body style="height: 2000px">
+    <canvas id="canvas"></canvas>
+    <header style="border-bottom: 10px solid #4f6bed">
+        <h1>МАСТЕРСКАЯ ИДЕЙ</h1>
+    </header>
+    <div class="about" style="padding: 10px">
+        <div class="info">
+            <div class="gears">
+                <div class="img"></div>
+            </div>
+            <div class="about-info">
+                <p>
+                    ЦМИТ - это площадка для технического творчества детей и молодежи. Это российский аналог известного международного проекта FabLab.
+                    <hr />
+                    Fab lab (англ. fabrication laboratory) — это цифровая лаборатория, где любой желающий может сделать «почти всё».
+                    <hr />
+                    Наша цель: предоставить всем желающим возможность реализовать свои творческие и/или научно-технические проекты!
+                    Для этого у нас есть 3D-принтеры, лазерные и фрезерные станки, режущий плоттер и ручной инструмент, а также люди, готовые обучить пользоваться всем этим оборудованием!
+                </p>
+            </div>
+        </div>
+        <hr />
+        <div class="services">
+
+        </div>
+        <hr />
+        <h3>Доступные пункты</h3>
+        @Html.ActionLink("Услуги", "Index", "Services")
+    </div>
+</body>
+<script>
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+    var dots = [];
+    var mousePos = {x: -20, y: -20};
+    var colors = ['#a8e6cf', '#dcedc1', '#ffd3b6', '#ffaaa5', '#ff8b94']
+
+    function Dot(x, y, color) {
+        var _this = this;
+        this.x = x;
+        this.y = y;
+        this.targetRadius = 50;
+        this.radius = 15;
+        this.color = color;
+
+        this.draw = function () {
+            var d = d2points(_this, mousePos);
+            if (d < 100) _this.targetRadius = 15 + (100 - d) / 7;
+            else _this.targetRadius = 3;
+            _this.radius = _this.radius + (_this.targetRadius - _this.radius) * 0.1;
+            ctx.beginPath();
+            ctx.arc(_this.x, _this.y, _this.radius, 0, 2 * Math.PI, false);
+            ctx.fillStyle = _this.color;
+            ctx.fill();
+        }
+    }
+
+    function placeDots() {
+        dots = [];
+        var ci = 0;
+        for (var x = 14; x < width; x = x + 60) {
+            for (var y = 14; y < height; y = y + 60) {
+                var d = new Dot(x, y, colors[ci % colors.length]);
+                dots.push(d);
+                ci++;
+            }
+        }
+    }
+
+    function drawDots() {
+        for (var i = 0; i < dots.length; i++) {
+            dots[i].draw();
+        }
+    }
+
+    function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        placeDots();
+    }
+
+    function addListeners() {
+        window.addEventListener('mousemove', mousemove);
+        window.addEventListener('touchstart', touchmove);
+        window.addEventListener('touchmove', touchmove);
+        window.addEventListener('resize', resize);
+        window.addEventListener('touchmove', function (e) {
+            e.preventDefault();
+        })
+    }
+
+    function mousemove(e) {
+        mousePos.x = e.pageX;
+        mousePos.y = e.pageY;
+    }
+
+    function touchmove(e) {
+        mousePos.y = e.targetTouches[0].pageY;
+        mousePos.x = e.targetTouches[0].pageX;
+    }
+
+    function loop() {
+        ctx.clearRect(0, 0, width, height);
+        drawDots();
+        requestAnimationFrame(loop);
+    }
+
+    function d2points(p1, p2)
+    {
+        var xs = p2.x - p1.x;
+        var xs = xs * xs;
+        var ys = p2.y - p1.y;
+        ys = ys * ys;
+        return Math.sqrt(xs + ys);
+    }
+
+    resize();
+    addListeners();
+    loop();
+</script>
+</html>

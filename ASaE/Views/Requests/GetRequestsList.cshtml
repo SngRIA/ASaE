@@ -1,0 +1,30 @@
+﻿@model IEnumerable<ASaE.Models.Request>
+
+@foreach (var request in Model)
+{
+    string stringStatus = string.Empty;
+    switch (request.Status)
+    {
+        case ASaE.Models.RequestStatus.Waiting:
+            stringStatus = "Ожидание";
+            break;
+        case ASaE.Models.RequestStatus.Ready:
+            stringStatus = "Готово";
+            break;
+        case ASaE.Models.RequestStatus.Canceled:
+            stringStatus = "Отменено";
+            break;
+        default:
+            stringStatus = "Отменено";
+            break;
+    }
+    <div class="object">
+        <div class="object-card-body">
+            <h5 class="object-card-title">#@request.Id</h5>
+            <p class="object-card-text">Статус: <strong>@stringStatus</strong></p>
+            <p class="object-card-text">Запросил: <strong>@request.Client.FirstName @request.Client.LastName</strong></p>
+            @Html.ActionLink("Подробнее", "Details", "Requests", new { Id = request.Id }, new { @class = "btn btn-outline-dark" })
+        </div>
+    </div>
+}
+

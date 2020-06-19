@@ -1,0 +1,5 @@
+﻿@{ 
+    var filePathName = "../../_ChartFiles/chart01.png";
+    var chart = Chart.GetFromCache(ViewData.GetViewDataInfo("chartKey").Value.ToString());
+    chart.Save(filePathName);
+}

@@ -1,0 +1,107 @@
+﻿@model ASaE.Models.Request
+
+@{
+    string stringStatus = string.Empty;
+    switch (Model.Status)
+    {
+        case ASaE.Models.RequestStatus.Waiting:
+            stringStatus = "Ожидание";
+            break;
+        case ASaE.Models.RequestStatus.Ready:
+            stringStatus = "Готово";
+            break;
+        case ASaE.Models.RequestStatus.Canceled:
+            stringStatus = "Отменено";
+            break;
+        default:
+            stringStatus = "Отменено";
+            break;
+    }
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">@Html.ActionLink("Главная страница", "Index", "Home")</li>
+        <li class="breadcrumb-item">@Html.ActionLink("Запросы", "Index")</li>
+        <li class="breadcrumb-item active" aria-current="page">Запрос #@Model.Id</li>
+    </ol>
+</nav>
+
+<hr />
+
+<div class="request-info">
+    <div class="form-group">
+        <h3>Запрос #@Model.Id</h3>
+        <hr />
+        <div class="consumable-info">
+            <h4>Запросил - @Model.Client.LastName @Model.Client.FirstName @Model.Client.MiddleName</h4>
+            <h4>Номер телефона - @Model.Client.PhoneNumber</h4>
+            <h4>Эмэйл - @Model.Client.Email</h4>
+            <h4>Необходимые услуги</h4>
+            <div style="border: 1px solid #191e23" class="mt-3">
+                @foreach (var item in Model.Items)
+                {
+                    <div class="basket-service m-1 justify-content-between" id="@string.Concat("item", item.Service.Id)">
+                        <div class="w-25">@item.Service.Name</div>
+                        <div>Количество - @item.Count</div>
+                    </div>
+                }
+            </div>
+            <h4 class="mt-2">Примечание - @Model.UserComment</h4>
+        </div>
+    </div>
+
+    <hr />
+
+    @if (Model.Status == ASaE.Models.RequestStatus.Waiting)
+    {
+        <div class="form-group mt-2">
+            <h4>Делегирование</h4>
+            <h5 class="pl-2">Сотрудник который будет отвечать за заказ</h5>
+            <div id="employee-select" class="m-2">
+
+            </div>
+            @using (Ajax.BeginForm("GetEmployeesList", new AjaxOptions
+            {
+                UpdateTargetId = "employee-select",
+                OnBegin = "OnBegin"
+            }))
+            {
+                @Html.TextBox("name", null, new { @class = "form-control mt-2", style = "width: -webkit-fill-available;margin: 0px 8px 0px 8px;" })
+                <div class="objects-filter-search">
+                    <button class="btn btn-outline-dark m-2"> Поиск </button>
+                </div>
+            }
+        </div>
+    }
+
+    <hr />
+
+    <div class="d-flex justify-content-center">
+        @Html.ActionLink("Вернуться", "Index", "Requests", new { @class = "btn btn-outline-dark mr-2" })
+
+        @if (Model.Status == ASaE.Models.RequestStatus.Waiting && User.Identity.IsAuthenticated)
+        {
+            using (Html.BeginForm("ConfirmRequest", "Requests", FormMethod.Post, new { id = "confirm-request" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(Model => Model.Id)
+                <div id="confirm">
+                    <input type="submit" value="Подтвердить" class="btn btn-outline-dark mr-2" />
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $("#employee-select").load("@Url.Action("GetEmployeesList")");
+        });
+
+        function OnBegin() {
+            $('#employee-select').html("");
+        }
+    </script>
+}

@@ -1,0 +1,18 @@
+﻿@model ASaE.Models.Service
+
+<h4>Удаление услуги #@Model.Id</h4>
+
+<div class="text-center">
+    Вы действительно хотитие удалить услугу - @Model.Name?
+</div>
+
+<hr />
+
+<div class="d-flex justify-content-center">
+    @Html.ActionLink("Вернуться", "Index", "Services", new { @class = "btn btn-outline-dark mr-2" })
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <input type="submit" value="Удалить услугу" class="btn btn-outline-dark mr-2" />
+    }
+</div>

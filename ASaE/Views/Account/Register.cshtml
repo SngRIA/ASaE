@@ -1,0 +1,54 @@
+﻿@model ASaE.Models.RegisterViewModel
+
+<h2>Регистрация</h2>
+
+<hr />
+
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+
+    <div class="object-prop m-2">
+        @Html.LabelFor(m => m.LastName, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+    </div>
+
+    <div class="object-prop m-2">
+        @Html.LabelFor(m => m.FirstName, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+    </div>
+
+    <div class="object-prop m-2">
+        @Html.LabelFor(m => m.MiddleName, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.MiddleName, new { @class = "form-control" })
+    </div>
+
+    <div class="object-prop m-2">
+        @Html.LabelFor(m => m.Email, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+    </div>
+
+    <div class="object-prop m-2">
+        @Html.LabelFor(m => m.PhoneNumber, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+    </div>
+
+    <div class="object-prop m-2">
+        @Html.LabelFor(m => m.Password, new { @class = "control-label" })
+        @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+    </div>
+
+    <div class="object-prop m-2">
+        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "control-label" })
+        @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+    </div>
+
+    <div class="d-flex justify-content-center ml-2 mt-3">
+        <input type="submit" value="Регистрация" class="btn btn-outline-dark mr-2" style="width: -webkit-fill-available;" />
+    </div>
+}
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

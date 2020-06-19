@@ -1,0 +1,51 @@
+﻿@model ASaE.Models.Contract
+
+@{ 
+    var stringStatus = "Выполняется";
+    var stringWorkEmployee = $"Работу выполнит - {Model.Employee.FirstName} {Model.Employee.LastName} {Model.Employee.MiddleName}";
+
+    if(Model.Status == ASaE.Models.ContractStatus.Ready)
+    {
+        stringStatus = "Выполнена";
+        stringWorkEmployee = $"Заказ выполнил - {Model.Employee.FirstName} {Model.Employee.LastName} {Model.Employee.MiddleName}";
+    }
+}
+<div class="contract-info">
+    <h3>Договор #@Model.Id</h3>
+    <h4>Статус - @stringStatus</h4>
+    <h4>Запросил - @Model.Client.FirstName @Model.Client.LastName @Model.Client.MiddleName</h4>
+    <hr />
+    <h4>Необходимые услуги</h4>
+    <div style="border: 1px solid #191e23">
+        @foreach (var item in Model.Items)
+        {
+            <div class="basket-service m-1 justify-content-between" id="@string.Concat("item", item.Service.Id)">
+                <div class="w-25">@item.Service.Name</div>
+                <div>Количество - @item.Count</div>
+            </div>
+         }
+    </div>
+    <hr />
+    <h4>@stringWorkEmployee</h4>
+    <hr />
+    <h4>Будет использовано следующее оборудование</h4>
+    <div>
+        @foreach (var item in Model.Items)
+        {
+            if (item.Service.Type == ASaE.Models.ServiceType.Training) { continue; }
+            
+            <div class="equipment-service m-1" id="@string.Concat("equipment", item.Service.Equipment.Id)">
+                <div style="flex-grow: 3">@item.Service.Equipment.Name</div>
+            </div>
+         }
+    </div>
+    <h4>Примечание - @Model.UserComment</h4>
+    
+    <div class="d-flex justify-content-center">
+        @Html.ActionLink("Вернуться", "Index", "Manage", null, new { @class = "btn btn-dark mr-2" })
+        @if (Model.Status == ASaE.Models.ContractStatus.Ready)
+        {
+            @*Html.ActionLink("Скачать договор", "DownloadContract", "Contracts", new { id = Model.Id }, new { @class = "btn btn-outline-dark" })*@
+        }
+    </div>
+</div>

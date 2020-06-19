@@ -1,0 +1,41 @@
+﻿@model ASaE.Models.EquipmentConsumable
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <h4 class="mt-2">Создание нового расходного материала</h4>
+    <hr />
+
+
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.Id)
+
+    <div class="service-prop m-2">
+        @Html.LabelFor(model => model.Name)
+        @Html.EditorFor(model => model.Name)
+        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+    </div>
+    <div class="service-prop m-2">
+        @Html.LabelFor(model => model.Description)
+        @Html.EditorFor(model => model.Description)
+        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+    </div>
+    <div class="service-prop m-2">
+        @Html.LabelFor(model => model.Value)
+        @Html.EditorFor(model => model.Value)
+        @Html.ValidationMessageFor(model => model.Value, "", new { @class = "text-danger" })
+    </div>
+    <div class="service-prop m-2">
+        @Html.LabelFor(model => model.MaxValue)
+        @Html.EditorFor(model => model.MaxValue)
+        @Html.ValidationMessageFor(model => model.MaxValue, "", new { @class = "text-danger" })
+    </div>
+
+    <hr />
+
+    <div class="d-flex justify-content-center">
+        @Html.ActionLink("Вернуться", "Index", "Services", new { @class = "btn btn-outline-dark mr-2" })
+        <input type="submit" value="Создать расходный материал" class="btn btn-outline-dark mr-2" />
+    </div>
+}

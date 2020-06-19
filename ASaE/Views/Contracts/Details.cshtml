@@ -1,0 +1,128 @@
+﻿@model ASaE.Models.Contract
+
+@{ 
+    string stringStatus = string.Empty;
+    switch (Model.Status)
+    {
+        case ASaE.Models.ContractStatus.Waiting:
+            stringStatus = "Ожидание";
+            break;
+        case ASaE.Models.ContractStatus.Ready:
+            stringStatus = "Готово";
+            break;
+        case ASaE.Models.ContractStatus.Canceled:
+            stringStatus = "Отменено";
+            break;
+        default:
+            stringStatus = "Отменено";
+            break;
+    }
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">@Html.ActionLink("Главная страница", "Index", "Home")</li>
+        <li class="breadcrumb-item">@Html.ActionLink("Договоры", "Index")</li>
+        <li class="breadcrumb-item active" aria-current="page">@string.Concat("Договор #", Model.Id)</li>
+    </ol>
+</nav>
+
+<hr />
+
+@using (Html.BeginForm("ConfirmContract", "Contracts", FormMethod.Post, new { id= "ConfirmContract" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(Model => Model.Id)
+    <div class="contract-info">
+        <h3>Договор #@Model.Id</h3>
+        <h4>Статус - @stringStatus</h4>
+        <h4>Запросил - @Model.Client.FirstName @Model.Client.LastName @Model.Client.MiddleName</h4>
+        <h4>Номер телефона - @Model.Client.PhoneNumber</h4>
+        <h4>Эмэйл - @Model.Client.Email</h4>
+        <hr />
+        <h4>Необходимые услуги</h4>
+        <div style="border: 1px solid #191e23">
+            @foreach (var item in Model.Items)
+            {
+                <div class="basket-service m-1 justify-content-between" id="@string.Concat("item", item.Service.Id)">
+                    <div class="w-25">@item.Service.Name</div>
+                    <div>@Ajax.ActionLink("Скачать файл", "GetFileByContract", new { id = Model.Id, serviceId = item.Id }, new AjaxOptions { })</div>
+                    <div>Количество - @item.Count</div>
+                </div>
+             }
+        </div>
+        <hr />
+        <h4 class="mt-2">Необходимое оборудование и затраты</h4>
+        <div>
+            @foreach (var item in Model.Items)
+            {
+                if(item.Service.Type == ASaE.Models.ServiceType.Training) { continue; }
+
+                <div class="equipment-service m-1" id="@string.Concat("equipment", item.Service.Equipment.Id)">
+                    <div style="flex-grow: 3">@item.Service.Equipment.Name</div>
+                    
+                    <div>
+                        @foreach (var consumable in item.Service.Equipment.EquipmentConsumables)
+                        {
+                            <div>
+                                <div> Материал - <strong> @consumable.Name </strong>, оставшиеся запасы - <strong> @consumable.Value </strong></div>
+                                <hr />
+
+                                <h5> Затраты </h5>
+
+                                <div style="display: flex">
+                                    <input type="range" id="range-value-@consumable.Id" name="consumable-@consumable.Id" value="@(item.File.Size / 10000)" min="0" max="@consumable.Value" style="flex-grow: 15" form="ConfirmContract" />
+                                    <label id="value-@consumable.Id" class="ml-2 mr-2 mb-0">@(item.File.Size / 10000)</label>
+                                </div>
+                            </div>
+
+                            <hr />
+                        }
+                    </div>
+                </div>
+            }
+            @Html.Hidden("countItems", Model.Items.Count)
+        </div>
+
+        <h4>Примечание - @Model.UserComment</h4>
+
+        <div class="d-flex justify-content-center">
+            @Html.ActionLink("Вернуться", "Index", "Contracts", new { @class = "btn btn-outline-dark mr-2" })
+            
+            @if (Model.Status == ASaE.Models.ContractStatus.Waiting && (User.IsInRole("admin") || User.IsInRole("eas")))
+            {
+                <div id="confirm">
+                    <input type="submit" value="Подтвердить" class="btn btn-outline-dark mr-2" />
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@section scripts {
+    @foreach (var item in Model.Items)
+    {
+        if (item.Service.Type == ASaE.Models.ServiceType.Training) { continue; }
+
+        foreach (var consumable in item.Service.Equipment.EquipmentConsumables)
+        {
+            <script>
+                let @string.Concat("rangeElement", consumable.Id) = $('#range-value-@consumable.Id');
+                $('#range-value-@consumable.Id').on("input", () => {
+                    $('#value-@consumable.Id').html(@string.Concat("rangeElement", consumable.Id, ".val()"));
+                    $('#range-value-@consumable.Id').attr("value", @string.Concat("rangeElement", consumable.Id, ".val()"));
+                });
+            </script>
+         }
+    }
+    <script>
+
+        $(document).ready(function () {
+            $("#employee-select").load("@Url.Action("GetEmployeesList")");
+        });
+
+        function OnBegin() {
+            $('#employee-select').html("");
+        }
+    </script>
+}
